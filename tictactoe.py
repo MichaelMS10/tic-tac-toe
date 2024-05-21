@@ -23,15 +23,41 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    raise NotImplementedError
+    "Iterate over the board and count X and O"
+    X_count = 0
+    O_count = 0
+
+    turn = X
+
+    for row in board:
+        for cell in row:
+            if cell == X:
+                X_count += 1
+            elif cell == O:
+                O_count += 1
+
+    if (X_count == 0 and O_count == 0) or X_count > O_count:
+        turn = X
+    else:
+        turn = O   
+    
+    return turn
 
 
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    raise NotImplementedError
 
+    "Iterate over the board and return a set of all possible actions"
+    possible_actions = []
+
+    for row in board:
+        for cell in row:
+            if cell == EMPTY:
+                possible_actions.append((row, cell))
+
+    return possible_actions
 
 def result(board, action):
     """
