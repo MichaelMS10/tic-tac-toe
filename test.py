@@ -1,3 +1,5 @@
 import tictactoe as ttt
 
-ttt.player(ttt.initial_state)
+board = ttt.initial_state()
+ttt.player(board)
+ttt.actions(board)

@@ -52,10 +52,17 @@ def actions(board):
     "Iterate over the board and return a set of all possible actions"
     possible_actions = []
 
+    i = -1
+    j = -1
+
     for row in board:
+        i += 1
         for cell in row:
+            if j >= 2:
+                j = -1
+            j += 1
             if cell == EMPTY:
-                possible_actions.append((row, cell))
+                possible_actions.append((i, j))
 
     return possible_actions
 
@@ -63,6 +70,12 @@ def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
+
+    "Iterate over the board and input the action performed"
+    for i in range(3):
+        for j in range(3):
+            
+
     raise NotImplementedError
 
 
