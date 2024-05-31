@@ -8,6 +8,8 @@ import copy
 X = "X"
 O = "O"
 EMPTY = None
+TURN = X
+WINNER = None
 
 
 def initial_state():
@@ -15,11 +17,18 @@ def initial_state():
     Returns starting state of the board.
     """
 
-    return [[EMPTY, EMPTY, EMPTY],
+    """return [[EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]
+            [EMPTY, EMPTY, EMPTY]]"""
 
+    """return [[X, O, X],
+            [O, O, X],
+            [O, X, O]]"""
  
+    return [[EMPTY, X, O],
+            [O, X, X],
+            [X, EMPTY, O]]
+    
 def player(board):
     """
     Returns player who has the next turn on a board.
@@ -37,7 +46,7 @@ def player(board):
             elif cell == O:
                 O_count += 1
 
-    if (X_count == 0 and O_count == 0) or X_count > O_count:
+    if (X_count == 0 and O_count == 0) or (X_count < O_count):
         turn = X
     else:
         turn = O   
@@ -74,12 +83,23 @@ def result(board, action):
 
     "Create a deep copy of the board"
     copied_board = copy.deepcopy(board)
+
+    "Raise an exception if action is not valid"
+    if not action:
+        return board
+    
+    try:
+        i, j = action
+        i = int(i)
+        j = int(j)
+    except ValueError:
+        raise ValueError("Invalid action: row and column should be integers")
     
     "Iterate over the board and input the action performed"
     for i in range(3):
         for j in range(3):
             if action == (i, j):
-                copied_board[i][j] = action 
+                copied_board[i][j] = TURN
             
     return copied_board
 
@@ -88,25 +108,73 @@ def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+
+    WINNER = None
+
+    "Verify if X is winner"
+
+    if (board[0][0] == X and board[0][1] == X and board[0][2] ==X) or (board[1][0] == X and board[1][1] == X and board[1][2] ==X) or (board[2][0] == X and board[2][1] == X and board[2][2] ==X):
+        WINNER = X
+    elif (board[0][0] == X and board[1][0] == X and board[2][0] ==X) or (board[0][1] == X and board[1][1] == X and board[2][1] ==X) or (board[0][2] == X and board[1][2] == X and board[2][2] ==X):
+        WINNER = X
+    elif (board[0][0] == X and board[1][1] == X and board[2][2] ==X) or (board[2][0] == X and board[1][1] == X and board[0][2] ==X):
+        WINNER = X
+
+    "Verify if O is winner"
+    if (board[0][0] == O and board[0][1] == O and board[0][2] == O) or (board[1][0] == O and board[1][1] == O and board[1][2] == O) or (board[2][0] == O and board[2][1] == O and board[2][2] == O):
+        WINNER = O
+    elif (board[0][0] == O and board[1][0] == O and board[2][0] == O) or (board[0][1] == O and board[1][1] == O and board[2][1] == O) or (board[0][2] == O and board[1][2] == O and board[2][2] == O):
+        WINNER = O
+    elif (board[0][0] == O and board[1][1] == O and board[2][2] == O) or (board[2][0] == O and board[1][1] == O and board[0][2] == O):
+        WINNER = O
+
+    return WINNER
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    return False
+
+    is_terminal = False
+    empty_count = 0
+
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == EMPTY:
+                empty_count +=1
+
+    if (WINNER != None) or (empty_count == 0):
+        is_terminal = True
+
+    return is_terminal
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+
+    utility_value = 0
+
+    if WINNER == X:
+        utility_value = 1
+
+    elif WINNER == O:
+        utility_value = -1
+
+    return utility_value
 
 
 def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+
+    if terminal(board) == True:
+        best_move = None
+
+    for i in range(len(actions(board))):
+        print(actions(board)[i])
+
+    return best_move
