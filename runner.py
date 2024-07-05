@@ -53,10 +53,10 @@ while True:
         pygame.draw.rect(screen, white, playOButton)
         screen.blit(playO, playORect)
 
-        user = ttt.X
+        """user = ttt.X"""
 
         # Check if button is clicked
-        """click, _, _ = pygame.mouse.get_pressed()
+        click, _, _ = pygame.mouse.get_pressed()
         if click == 1:
             mouse = pygame.mouse.get_pos()
             if playXButton.collidepoint(mouse):
@@ -64,7 +64,7 @@ while True:
                 user = ttt.X
             elif playOButton.collidepoint(mouse):
                 time.sleep(0.2)
-                user = ttt.O"""
+                user = ttt.O
 
     else:
 

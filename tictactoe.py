@@ -26,7 +26,7 @@ def initial_state():
             [O, X, O]]"""
  
     return [[EMPTY, X, O],
-            [O, X, X],
+            [O, X, EMPTY],
             [X, EMPTY, O]]
     
 def player(board):
@@ -46,7 +46,7 @@ def player(board):
             elif cell == O:
                 O_count += 1
 
-    if (X_count == 0 and O_count == 0) or (X_count < O_count):
+    if (X_count == 0 and O_count == 0) or (X_count <= O_count):
         turn = X
     else:
         turn = O   
@@ -99,7 +99,7 @@ def result(board, action):
     for i in range(3):
         for j in range(3):
             if action == (i, j):
-                copied_board[i][j] = TURN
+                copied_board[i][j] = player(board)
             
     return copied_board
 
@@ -144,7 +144,7 @@ def terminal(board):
             if board[i][j] == EMPTY:
                 empty_count +=1
 
-    if (WINNER != None) or (empty_count == 0):
+    if (winner(board) != None) or (empty_count == 0):
         is_terminal = True
 
     return is_terminal
@@ -154,6 +154,8 @@ def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
+
+    WINNER = winner(board)
 
     utility_value = 0
 
@@ -173,8 +175,48 @@ def minimax(board):
 
     if terminal(board) == True:
         best_move = None
+    
+    moves = actions(board) 
+    moves_utilities = []
 
-    for i in range(len(actions(board))):
-        print(actions(board)[i])
+    # Create a dictionary to hold copies of the boards
+    boards = {}
+    # We might store the first board in a separate variable from the boards dictionary and then create a separate group of boards
+
+    for i in range(len(moves)):
+        # Reapeat until board is terminal               
+
+        for j in range(len(moves)):
+
+            # Calculate the utility of the result certain move performed by the current player
+
+            # Create a new board with the result of the first move
+            if j == 0 and i == 0:
+                new_board = result(board, moves[j])
+            
+            # Perform alternative move for next root move
+            elif j > 0 and i > 0:
+                new_board = result(boards[j - 1], moves[j - 1])
+
+            elif j > 0:
+                new_board = result(boards[j - 1], moves[j])
+
+            elif i > 0:
+                new_board = result(board, moves[i])
+
+            if terminal(new_board) == True:
+                boards[j] = new_board 
+                utility_value = utility(new_board)
+                moves_utilities.append((moves[i], utility_value))
+
+            else:          
+                boards[j] = new_board       
+
+    # Evaluate which move is the optimal
+
+    for i in range(len(moves_utilities)):
+        if moves_utilities[i][1] == 1:
+            best_move = moves_utilities[i][0]
+            print("Best move: ", best_move)
 
     return best_move
