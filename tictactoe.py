@@ -17,17 +17,17 @@ def initial_state():
     Returns starting state of the board.
     """
 
-    """return [[EMPTY, EMPTY, EMPTY],
+    return [[EMPTY, EMPTY, EMPTY],
             [EMPTY, EMPTY, EMPTY],
-            [EMPTY, EMPTY, EMPTY]]"""
+            [EMPTY, EMPTY, EMPTY]]
 
     """return [[X, O, X],
             [O, O, X],
             [O, X, O]]"""
  
-    return [[EMPTY, X, O],
+    """return [[EMPTY, X, O],
             [O, X, EMPTY],
-            [X, EMPTY, O]]
+            [X, EMPTY, O]]"""
     
 def player(board):
     """
@@ -178,45 +178,56 @@ def minimax(board):
     
     moves = actions(board) 
     moves_utilities = []
-
-    # Create a dictionary to hold copies of the boards
+    current_player = player(board)
+    best_move = None
     boards = {}
-    # We might store the first board in a separate variable from the boards dictionary and then create a separate group of boards
 
-    for i in range(len(moves)):
-        # Reapeat until board is terminal               
+    if current_player == X:
+        # Iterate over moves and calculate their utilities
+        for move in moves:
+            new_board = result(board, move)
+            utility_value = min_value(new_board) 
+            moves_utilities.append((move, utility_value))
+        
+        # Find the move with the maximum utility value
+        best_move = max(moves_utilities, key=lambda x: x[1])[0]        
 
-        for j in range(len(moves)):
+    elif current_player == O:
+        # Iterate over moves and calculate their utilities
+        for move in moves:
+            new_board = result(board, move)
+            utility_value = max_value(new_board)
+            moves_utilities.append((move, utility_value))
 
-            # Calculate the utility of the result certain move performed by the current player
-
-            # Create a new board with the result of the first move
-            if j == 0 and i == 0:
-                new_board = result(board, moves[j])
-            
-            # Perform alternative move for next root move
-            elif j > 0 and i > 0:
-                new_board = result(boards[j - 1], moves[j - 1])
-
-            elif j > 0:
-                new_board = result(boards[j - 1], moves[j])
-
-            elif i > 0:
-                new_board = result(board, moves[i])
-
-            if terminal(new_board) == True:
-                boards[j] = new_board 
-                utility_value = utility(new_board)
-                moves_utilities.append((moves[i], utility_value))
-
-            else:          
-                boards[j] = new_board       
-
-    # Evaluate which move is the optimal
-
-    for i in range(len(moves_utilities)):
-        if moves_utilities[i][1] == 1:
-            best_move = moves_utilities[i][0]
-            print("Best move: ", best_move)
+        # Find the move with the minimum utility value
+        best_move = min(moves_utilities, key=lambda x: x[1])[0]      
 
     return best_move
+
+def max_value(board):
+    """
+    Returns the maximum utility value for the current player.
+    """
+    if terminal(board):
+        v = utility(board) 
+
+    else:
+        v = -math.inf
+        for action in actions(board):
+            v = max(v, min_value(result(board, action)))
+
+    return v
+
+def  min_value(board):
+    """
+    Returns the minimum utility value for the current player.
+    """
+    if terminal(board):
+        v = utility(board)
+
+    else:
+        v = math.inf
+        for action in actions(board):
+            v = min(v, max_value(result(board, action)))
+
+    return v
